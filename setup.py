@@ -77,11 +77,8 @@ os.system('brew cask install font-dosis font-droid-sans-mono-for-powerline font-
 
 print "Installing Essential Apps..."
 os.system('brew cask install iterm2 istat-menus spectacle the-unarchiver')
-os.system('brew cask install google-chrome github sublime-merge visual-studio-code spotify franz vlc zoom')
-
-print "Settings iTerm as default app for command files..."
-show_notification("We need your password:")
-os.system('duti -s com.googlecode.iterm2 .command all')
+os.system('brew cask install google-chrome github visual-studio-code')
+os.system('brew cask install spotify slack whatsapp notion vlc zoomus')
 
 os.system('brew cask fetch qlimagesize')
 show_notification("We need your password:")
@@ -183,6 +180,9 @@ os.system('brew autoupdate --start --upgrade')
 
 # Make Google Chrome the default browser
 os.system('open -a "Google Chrome" --args --make-default-browser')
+
+# Make iTerm the default app for .command files
+os.system('duti -s com.googlecode.iterm2 .command all')
 
 # Open Spectacle (Needs to be enabled manually)
 os.system('open -a "Spectacle"')
