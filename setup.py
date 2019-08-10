@@ -11,23 +11,26 @@ email = ''
 
 # Check for Xcode Command Line Tools
 if os.system('xcode-select -p') != 0:
-  print "Installing XCode Command Line Tools..."
-  os.system('xcode-select --install')
-  print "**************************************************************"
-  print "  Install XCode Command Line Tools and run this script again  "
-  print "**************************************************************"
-  exit()
+    print "Installing XCode Command Line Tools..."
+    os.system('xcode-select --install')
+    print "**************************************************************"
+    print "  Install XCode Command Line Tools and run this script again  "
+    print "**************************************************************"
+    exit()
 
 # User
 while name == '':
-  name = raw_input("What's your name?\n").strip()
+    name = raw_input("What's your name?\n").strip()
 
 # Email
 while email == '' or '@' not in email:
-  email = raw_input("What's your email?\n").strip()
+    email = raw_input("What's your email?\n").strip()
+
 
 def show_notification(text):
-  os.system('osascript -e \'display notification "'+ text +'" with title "Mac Setup"\' > /dev/null')
+    os.system('osascript -e \'display notification "' +
+              text + '" with title "Mac Setup"\' > /dev/null')
+
 
 print "Hey %s, lets setup your new Mac!" % name
 print "You'll be asked for your password a few times during this process"
@@ -35,8 +38,8 @@ print "*************************************"
 
 # Create a Private Key
 if not os.path.isfile(os.path.expanduser("~") + '/.ssh/id_rsa.pub'):
-  print "Creating your Private Key..."
-  os.system('ssh-keygen -t rsa -b 4096 -f ~/.ssh/id_rsa -N "" -C "%s"' % email)
+    print "Creating your Private Key..."
+    os.system('ssh-keygen -t rsa -b 4096 -f ~/.ssh/id_rsa -N "" -C "%s"' % email)
 
 # Set computer name & git info
 os.system('sudo scutil --set ComputerName "%s"' % name)
@@ -61,6 +64,10 @@ print "Installing Git+NodeJS+Python+Ruby..."
 os.system('brew install git node python python3 ruby')
 os.system('brew link --overwrite git node python python3 ruby')
 os.system('brew unlink python && brew link --overwrite python')
+os.system('brew install watchman')
+os.system('brew tap AdoptOpenJDK/openjdk')
+os.system('brew cask install adoptopenjdk8')
+os.system('npm install -g react-native-cli')
 os.system('brew install git-flow git-lfs')
 os.system('git lfs install')
 
@@ -114,7 +121,8 @@ if os.system('test -n "$ZSH_CUSTOM"') != 0:
     os.system('export ZSH_CUSTOM=~/.oh-my-zsh/custom')
 
 if os.system('test -d "$ZSH"') != 0:
-    os.system('umask g-w,o-w && git clone --depth=1 https://github.com/robbyrussell/oh-my-zsh.git $ZSH')
+    os.system(
+        'umask g-w,o-w && git clone --depth=1 https://github.com/robbyrussell/oh-my-zsh.git $ZSH')
 
 if os.system('test -f ~/.zshrc') != 0:
     os.system('cp $ZSH/templates/zshrc.zsh-template ~/.zshrc')
@@ -132,7 +140,8 @@ if (subprocess.call(['bash', '-c', 'diff <(tail -n +6 ~/.zshrc) <(tail -n +6  ~/
     os.system('echo "alias dog=\'bat\'" >> ~/.zshrc')
     # Don't show the user in the prompt
     os.system('echo "DEFAULT_USER=\`whoami\`" >> ~/.zshrc')
-    os.system('echo "export NVM_DIR=\"\$HOME/.nvm\"\n[ -s \"\$NVM_DIR/nvm.sh\" ] && . \"\$NVM_DIR/nvm.sh\" # This loads nvm" >> ~/.zshrc')
+    os.system(
+        'echo "export NVM_DIR=\"\$HOME/.nvm\"\n[ -s \"\$NVM_DIR/nvm.sh\" ] && . \"\$NVM_DIR/nvm.sh\" # This loads nvm" >> ~/.zshrc')
 
 # Remove the 'last login' message
 os.system('touch ~/.hushlogin')
@@ -154,7 +163,8 @@ os.system('defaults write com.apple.finder QLEnableTextSelection -bool true')
 os.system('defaults write com.apple.SoftwareUpdate ScheduleFrequency -int 1')
 
 # Disable auto-correct
-os.system('defaults write NSGlobalDomain NSAutomaticSpellingCorrectionEnabled -bool false')
+os.system(
+    'defaults write NSGlobalDomain NSAutomaticSpellingCorrectionEnabled -bool false')
 
 # Require password immediately after sleep or screen saver begins
 os.system('defaults write com.apple.screensaver askForPassword -int 1')
@@ -164,7 +174,8 @@ os.system('chflags nohidden ~/Library')
 # Don’t automatically rearrange Spaces based on most recent use
 os.system('defaults write com.apple.dock mru-spaces -bool false')
 # Prevent Time Machine from prompting to use new hard drives as backup volume
-os.system('defaults write com.apple.TimeMachine DoNotOfferNewDisksForBackup -bool true')
+os.system(
+    'defaults write com.apple.TimeMachine DoNotOfferNewDisksForBackup -bool true')
 
 print "Tweaking System Animations..."
 os.system('defaults write NSGlobalDomain NSWindowResizeTime -float 0.1')
