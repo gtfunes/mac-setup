@@ -72,7 +72,7 @@ os.system('brew install git-flow git-lfs')
 os.system('git lfs install')
 
 print "Installing Useful Stuff..."
-os.system('brew install graphicsmagick curl wget sqlite libpng libxml2 openssl duti')
+os.system('brew install graphicsmagick curl wget sqlite libpng libxml2 openssl duti git-extras')
 os.system('brew install bat tldr tree')
 
 # OSX Tweaks & Essentials
