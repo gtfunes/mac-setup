@@ -195,6 +195,16 @@ os.system('open -a "Google Chrome" --args --make-default-browser')
 # Make iTerm the default app for .command files
 os.system('duti -s com.googlecode.iterm2 .command all')
 
+# Make VSCode the default app for development related files
+os.system('duti -s com.microsoft.VSCode .js all')
+os.system('duti -s com.microsoft.VSCode .ts all')
+os.system('duti -s com.microsoft.VSCode .json all')
+os.system('duti -s com.microsoft.VSCode .sh all')
+os.system('duti -s com.microsoft.VSCode .yml all')
+os.system('duti -s com.microsoft.VSCode .py all')
+os.system('duti -s com.microsoft.VSCode .xml all')
+os.system('duti -s com.microsoft.VSCode .md all')
+
 # Open Spectacle (Needs to be enabled manually)
 os.system('open -a "Spectacle"')
 
