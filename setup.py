@@ -38,7 +38,7 @@ print "*************************************"
 
 # Create a Private Key
 if not os.path.isfile(os.path.expanduser("~") + '/.ssh/id_rsa.pub'):
-    print "Creating your Private Key..."
+    print "Creating your private key..."
     os.system('ssh-keygen -t rsa -b 4096 -f ~/.ssh/id_rsa -N "" -C "%s"' % email)
 
 # Set computer name & git info
@@ -57,10 +57,11 @@ os.system('brew tap caskroom/cask')
 os.system('brew tap homebrew/services')
 os.system('brew tap caskroom/versions')
 os.system('brew tap caskroom/fonts')
+os.system('brew tap 0xmachos/homebrew-mosl')
 os.system('brew update && brew upgrade && brew cleanup && brew cask cleanup')
 
 # Install Languages
-print "Installing Git+NodeJS+Python+Ruby..."
+print "Installing Git+NodeJS+Python+Ruby+JDK+React-Native..."
 os.system('brew install git node python python3 ruby')
 os.system('brew link --overwrite git node python python3 ruby')
 os.system('brew unlink python && brew link --overwrite python')
@@ -71,46 +72,49 @@ os.system('npm install -g react-native-cli')
 os.system('brew install git-flow git-lfs')
 os.system('git lfs install')
 
-print "Installing Useful Stuff..."
+print "Installing useful stuff..."
 os.system('brew install graphicsmagick curl wget sqlite libpng libxml2 openssl duti git-extras')
 os.system('brew install bat tldr tree')
 
-# OSX Tweaks & Essentials
-print "Installing Quicklook Helpers..."
+# Install Apps
+print "Installing Quicklook helpers..."
 os.system('brew cask install qlcolorcode qlmarkdown quicklook-csv quicklook-json webpquicklook suspicious-package epubquicklook qlstephen qlprettypatch font-hack qlvideo')
 
-print "Installing Fonts..."
+print "Installing fonts..."
 os.system('brew cask install font-dosis font-droid-sans-mono-for-powerline font-open-sans font-open-sans-condensed font-roboto font-roboto-mono font-roboto-condensed font-roboto-slab font-consolas-for-powerline font-dejavu-sans font-dejavu-sans-mono-for-powerline font-inconsolata font-inconsolata-for-powerline font-lato font-menlo-for-powerline font-meslo-lg font-meslo-for-powerline font-noto-sans font-noto-serif font-source-sans-pro font-source-serif-pro font-ubuntu font-pt-mono font-pt-sans font-pt-serif font-fira-mono font-fira-mono-for-powerline font-fira-code font-fira-sans font-source-code-pro')
 
-print "Installing Essential Apps..."
+print "Installing essential apps..."
 os.system('brew cask install iterm2 istat-menus spectacle the-unarchiver')
 os.system('brew cask install google-chrome github visual-studio-code')
 os.system('brew cask install spotify slack whatsapp notion vlc zoomus')
-
-os.system('brew cask fetch qlimagesize')
-show_notification("We need your password:")
-os.system('brew cask install qlimagesize')
-
-# Software
-os.system('brew cask install docker sequel-pro cyberduck insomnia')
-os.system('brew cask fetch java')
-
-show_notification("We need your password:")
-os.system('brew cask install java')
-
+os.system('brew cask install docker sequel-pro cyberduck insomnia imageoptim')
 os.system('brew cask install android-studio')
 os.system('brew install android-platform-tools')
 
+os.system('brew cask fetch qlimagesize')
+print "Installing QLImageSize..."
+show_notification("We need your password:")
+os.system('brew cask install qlimagesize')
+
+os.system('brew cask fetch java')
+print "Installing Java..."
+show_notification("We need your password:")
+os.system('brew cask install java')
+
+print "Installing Cocoapods..."
 show_notification("We need your password:")
 os.system('sudo gem install cocoapods')
 
+print "Installing Fastlane..."
 show_notification("We need your password:")
 os.system('sudo gem install fastlane --verbose')
 
-os.system('brew cask install imageoptim')
+print "Running security audit..."
+os.system('brew install mosl')
+os.system('Lockdown fix')
 
 # Oh-My-ZSH
-print "Installing Oh-My-Zsh with Dracula Theme..."
+print "Installing Oh-My-Zsh with Dracula theme..."
 show_notification("We need your password")
 
 # Adapted from https://raw.githubusercontent.com/robbyrussell/oh-my-zsh/master/tools/install.sh
@@ -146,11 +150,11 @@ if (subprocess.call(['bash', '-c', 'diff <(tail -n +6 ~/.zshrc) <(tail -n +6  ~/
 # Remove the 'last login' message
 os.system('touch ~/.hushlogin')
 
-print "Dracula Theme will be downloaded to your Desktop, set it later from iTerm profile color settings!"
+print "Dracula theme will be downloaded to your Desktop, set it later from iTerm profile color settings!"
 os.system('git clone https://github.com/dracula/iterm.git ~/Desktop/dracula-theme/')
 
 # Random OSX Settings
-print "Tweaking OSX Settings..."
+print "Tweaking OSX settings..."
 
 # Finder: show hidden files by default
 os.system('defaults write com.apple.finder AppleShowAllFiles -bool true')
@@ -177,7 +181,7 @@ os.system('defaults write com.apple.dock mru-spaces -bool false')
 os.system(
     'defaults write com.apple.TimeMachine DoNotOfferNewDisksForBackup -bool true')
 
-print "Tweaking System Animations..."
+print "Tweaking system animations..."
 os.system('defaults write NSGlobalDomain NSWindowResizeTime -float 0.1')
 os.system('defaults write com.apple.dock expose-animation-duration -float 0.15')
 os.system('defaults write com.apple.dock autohide-delay -float 0')
@@ -185,7 +189,7 @@ os.system('defaults write com.apple.dock autohide-time-modifier -float 0.3')
 os.system('defaults write NSGlobalDomain com.apple.springing.delay -float 0.5')
 os.system('killall Dock')
 
-print "Enabling Automatic Brew Updates & Upgrades..."
+print "Enabling automatic Brew updates & upgrades..."
 os.system('brew tap domt4/autoupdate')
 os.system('brew autoupdate --start --upgrade')
 
