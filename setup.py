@@ -84,10 +84,12 @@ print "Installing fonts..."
 os.system('brew cask install font-dosis font-droid-sans-mono-for-powerline font-open-sans font-open-sans-condensed font-roboto font-roboto-mono font-roboto-condensed font-roboto-slab font-consolas-for-powerline font-dejavu-sans font-dejavu-sans-mono-for-powerline font-inconsolata font-inconsolata-for-powerline font-lato font-menlo-for-powerline font-meslo-lg font-meslo-for-powerline font-noto-sans font-noto-serif font-source-sans-pro font-source-serif-pro font-ubuntu font-pt-mono font-pt-sans font-pt-serif font-fira-mono font-fira-mono-for-powerline font-fira-code font-fira-sans font-source-code-pro')
 
 print "Installing essential apps..."
-os.system('brew cask install iterm2 istat-menus spectacle the-unarchiver')
-os.system('brew cask install google-chrome github visual-studio-code')
-os.system('brew cask install spotify slack whatsapp notion vlc zoomus')
-os.system('brew cask install docker sequel-pro cyberduck insomnia imageoptim')
+os.system('brew cask install iterm2 istat-menus spectacle the-unarchiver karabiner-elements authy')
+os.system(
+    'brew cask install google-chrome github visual-studio-code qbittorrent daisydisk')
+os.system(
+    'brew cask install spotify slack whatsapp notion vlc zoomus cleanmymac discord')
+os.system('brew cask install docker sequel-pro cyberduck insomnia imageoptim postman crossover')
 os.system('brew cask install android-studio')
 os.system('brew install android-platform-tools')
 
