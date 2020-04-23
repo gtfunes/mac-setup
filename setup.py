@@ -72,9 +72,16 @@ os.system('npm install -g react-native-cli')
 os.system('brew install git-flow git-lfs')
 os.system('git lfs install')
 
+# Install some useful dev stuff
 print "Installing useful stuff..."
 os.system('brew install graphicsmagick curl wget sqlite libpng libxml2 openssl duti git-extras')
 os.system('brew install bat tldr tree')
+
+# Install Apps only available via MAS
+print "Installing MAS apps..."
+os.system('brew install mas')
+os.system('mas signin --dialog "%s"' % email)  # We need to sign in first!
+os.system('mas install 937984704')  # Install Amphetamine
 
 # Install Apps
 print "Installing Quicklook helpers..."
@@ -89,7 +96,8 @@ os.system(
     'brew cask install google-chrome github visual-studio-code qbittorrent daisydisk')
 os.system(
     'brew cask install spotify slack whatsapp notion vlc zoomus cleanmymac discord')
-os.system('brew cask install docker sequel-pro cyberduck insomnia imageoptim postman crossover')
+os.system(
+    'brew cask install docker sequel-pro cyberduck imageoptim postman crossover')
 os.system('brew cask install android-studio')
 os.system('brew install android-platform-tools')
 
