@@ -93,7 +93,7 @@ os.system('brew cask install font-dosis font-droid-sans-mono-for-powerline font-
 print "Installing essential apps..."
 os.system('brew cask install iterm2 istat-menus spectacle the-unarchiver karabiner-elements authy')
 os.system(
-    'brew cask install google-chrome github visual-studio-code qbittorrent daisydisk')
+    'brew cask install google-chrome github visual-studio-code qbittorrent daisydisk macdown')
 os.system(
     'brew cask install spotify slack whatsapp notion vlc zoomus cleanmymac discord')
 os.system(
