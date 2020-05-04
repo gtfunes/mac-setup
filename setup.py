@@ -191,6 +191,10 @@ os.system('defaults write com.apple.dock mru-spaces -bool false')
 os.system(
     'defaults write com.apple.TimeMachine DoNotOfferNewDisksForBackup -bool true')
 
+# Disable two finger swipe to go back/forward in Google Chrome
+os.system(
+    'defaults write com.google.Chrome AppleEnableSwipeNavigateWithScrolls -bool false')
+
 print "Tweaking system animations..."
 os.system('defaults write NSGlobalDomain NSWindowResizeTime -float 0.1')
 os.system('defaults write com.apple.dock expose-animation-duration -float 0.15')
