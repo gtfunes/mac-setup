@@ -62,7 +62,7 @@ os.system('brew update && brew upgrade && brew cleanup && brew cask cleanup')
 
 # Install Languages
 print "Installing Git+NodeJS+Python+Ruby+JDK+React-Native..."
-os.system('brew install git node python python3 ruby')
+os.system('brew install git node ruby python python3 nvm rbenv')
 os.system('brew link --overwrite git node python python3 ruby')
 os.system('brew unlink python && brew link --overwrite python')
 os.system('brew install watchman')
@@ -150,8 +150,6 @@ if (subprocess.call(['bash', '-c', 'diff <(tail -n +6 ~/.zshrc) <(tail -n +6  ~/
     os.system('sed -i -e \'s/robbyrussell/agnoster/g\' ~/.zshrc &> /dev/null')
     # Plugins
     os.system('sed -i -e \'s/plugins=(git)/plugins=(git brew sublime node npm docker zsh-autosuggestions zsh-syntax-highlighting colored-man-pages copydir copyfile extract)/g\' ~/.zshrc &> /dev/null')
-    # Customizations
-    os.system('echo "alias dog=\'bat\'" >> ~/.zshrc')
     # Don't show the user in the prompt
     os.system('echo "DEFAULT_USER=\`whoami\`" >> ~/.zshrc')
     os.system(
