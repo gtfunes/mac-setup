@@ -83,6 +83,8 @@ print "---> Installing MAS apps...\n"
 os.system('brew install mas')
 os.system('mas signin --dialog "%s"' % email)  # We need to sign in first!
 os.system('mas install 937984704')  # Install Amphetamine
+os.system('mas install 497799835')  # Install Xcode
+os.system("sudo xcode-select --switch /Applications/Xcode.app") # Select Xcode app to avoid issues running apps later
 
 # Install Apps
 print "---> Installing Quicklook helpers...\n"
