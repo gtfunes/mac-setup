@@ -38,7 +38,7 @@ print "*************************************"
 
 # Create a Private Key
 if not os.path.isfile(os.path.expanduser("~") + '/.ssh/id_rsa.pub'):
-    print "Creating your private key..."
+    print "---> Creating your private key...\n"
     os.system('ssh-keygen -t rsa -b 4096 -f ~/.ssh/id_rsa -N "" -C "%s"' % email)
 
 # Set computer name & git info
@@ -50,81 +50,72 @@ os.system('git config --global user.name "%s"' % name)
 os.system('git config --global user.email "%s"' % email)
 
 # Install Brew & Brew Cask
-print "Installing Brew & Brew Cask..."
+print "---> Installing Brew & Brew Cask...\n"
 os.system('touch ~/.bash_profile')
 os.system('/usr/bin/ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"')
-os.system('brew tap caskroom/cask')
+os.system('brew tap homebrew/cask')
 os.system('brew tap homebrew/services')
-os.system('brew tap caskroom/versions')
-os.system('brew tap caskroom/fonts')
+os.system('brew tap homebrew/cask-versions')
+os.system('brew tap homebrew/casek-fonts')
 os.system('brew tap 0xmachos/homebrew-mosl')
 os.system('brew update && brew upgrade && brew cleanup && brew cask cleanup')
 
 # Install Languages
-print "Installing Git+NodeJS+Python+Ruby+JDK+React-Native..."
+print "---> Installing Git+NodeJS+Python+Ruby+JDK+React-Native...\n"
 os.system('brew install git node ruby python python3 nvm rbenv')
 os.system('brew link --overwrite git node python python3 ruby')
 os.system('brew unlink python && brew link --overwrite python')
 os.system('brew install watchman')
 os.system('brew tap AdoptOpenJDK/openjdk')
-os.system('brew cask install adoptopenjdk8')
+os.system('brew install --cask adoptopenjdk8')
 os.system('npm install -g react-native-cli')
 os.system('brew install git-flow git-lfs')
 os.system('git lfs install')
 
 # Install some useful dev stuff
-print "Installing useful stuff..."
+print "---> Installing useful stuff...\n"
 os.system('brew install graphicsmagick curl wget sqlite libpng libxml2 openssl duti git-extras')
 os.system('brew install bat tldr tree')
 
 # Install Apps only available via MAS
-print "Installing MAS apps..."
+print "---> Installing MAS apps...\n"
 os.system('brew install mas')
 os.system('mas signin --dialog "%s"' % email)  # We need to sign in first!
 os.system('mas install 937984704')  # Install Amphetamine
 
 # Install Apps
-print "Installing Quicklook helpers..."
-os.system('brew cask install qlcolorcode qlmarkdown quicklook-csv quicklook-json webpquicklook suspicious-package epubquicklook qlstephen qlprettypatch font-hack qlvideo')
+print "---> Installing Quicklook helpers...\n"
+os.system('brew install --cask qlcolorcode qlmarkdown quicklook-csv quicklook-json webpquicklook suspicious-package epubquicklook qlstephen qlprettypatch font-hack qlvideo')
 
-print "Installing fonts..."
-os.system('brew cask install font-dosis font-droid-sans-mono-for-powerline font-open-sans font-open-sans-condensed font-roboto font-roboto-mono font-roboto-condensed font-roboto-slab font-consolas-for-powerline font-dejavu-sans font-dejavu-sans-mono-for-powerline font-inconsolata font-inconsolata-for-powerline font-lato font-menlo-for-powerline font-meslo-lg font-meslo-for-powerline font-noto-sans font-noto-serif font-source-sans-pro font-source-serif-pro font-ubuntu font-pt-mono font-pt-sans font-pt-serif font-fira-mono font-fira-mono-for-powerline font-fira-code font-fira-sans font-source-code-pro')
+print "---> Installing fonts...\n"
+os.system('brew install --cask font-dosis font-droid-sans-mono-for-powerline font-open-sans font-open-sans-condensed font-roboto font-roboto-mono font-roboto-condensed font-roboto-slab font-consolas-for-powerline font-dejavu-sans font-dejavu-sans-mono-for-powerline font-inconsolata font-inconsolata-for-powerline font-lato font-menlo-for-powerline font-meslo-lg font-meslo-for-powerline font-noto-sans font-noto-serif font-source-sans-pro font-source-serif-pro font-ubuntu font-pt-mono font-pt-sans font-pt-serif font-fira-mono font-fira-mono-for-powerline font-fira-code font-fira-sans font-source-code-pro')
 
-print "Installing essential apps..."
-os.system('brew cask install iterm2 istat-menus rectangle the-unarchiver karabiner-elements authy')
+print "---> Installing essential apps...\n"
+os.system('brew install --cask 1password iterm2 istat-menus rectangle the-unarchiver authy alt-tab')
 os.system(
-    'brew cask install google-chrome github visual-studio-code qbittorrent daisydisk macdown')
+    'brew install --cask google-chrome github visual-studio-code qbittorrent daisydisk macdown')
 os.system(
-    'brew cask install spotify slack whatsapp notion vlc zoomus cleanmymac discord')
+    'brew install --cask spotify slack whatsapp notion vlc zoomus cleanmymac discord calibre')
 os.system(
-    'brew cask install docker sequel-pro cyberduck imageoptim postman crossover')
-os.system('brew cask install android-studio')
+    'brew install --cask docker sequel-pro cyberduck imageoptim handbrake postman google-drive adobe-creative-cloud')
+os.system('brew install --cask android-studio')
 os.system('brew install android-platform-tools')
 
 os.system('brew cask fetch qlimagesize')
-print "Installing QLImageSize..."
+print "---> Installing QLImageSize...\n"
 show_notification("We need your password:")
-os.system('brew cask install qlimagesize')
+os.system('brew install --cask qlimagesize')
 
-os.system('brew cask fetch java')
-print "Installing Java..."
-show_notification("We need your password:")
-os.system('brew cask install java')
-
-print "Installing Cocoapods..."
+print "---> Installing Cocoapods...\n"
 show_notification("We need your password:")
 os.system('sudo gem install cocoapods')
 
-print "Installing Fastlane..."
+print "---> Installing Fastlane...\n"
 show_notification("We need your password:")
 os.system('sudo gem install fastlane --verbose')
 
-print "Running security audit..."
-os.system('brew install mosl')
-os.system('Lockdown fix')
-
 # Oh-My-ZSH
-print "Installing Oh-My-Zsh with Dracula theme..."
+print "---> Installing Oh-My-Zsh with Dracula theme...\n"
 show_notification("We need your password")
 
 # Adapted from https://raw.githubusercontent.com/robbyrussell/oh-my-zsh/master/tools/install.sh
@@ -158,11 +149,11 @@ if (subprocess.call(['bash', '-c', 'diff <(tail -n +6 ~/.zshrc) <(tail -n +6  ~/
 # Remove the 'last login' message
 os.system('touch ~/.hushlogin')
 
-print "Dracula theme will be downloaded to your Desktop, set it later from iTerm profile color settings!"
+print "---> Dracula theme will be downloaded to your Desktop, set it later from iTerm profile color settings!\n"
 os.system('git clone https://github.com/dracula/iterm.git ~/Desktop/dracula-theme/')
 
 # Random OSX Settings
-print "Tweaking OSX settings..."
+print "---> Tweaking OSX settings...\n"
 
 # Finder: show hidden files by default
 os.system('defaults write com.apple.finder AppleShowAllFiles -bool true')
@@ -193,17 +184,13 @@ os.system(
 os.system(
     'defaults write com.google.Chrome AppleEnableSwipeNavigateWithScrolls -bool false')
 
-print "Tweaking system animations..."
+print "---> Tweaking system animations...\n"
 os.system('defaults write NSGlobalDomain NSWindowResizeTime -float 0.1')
 os.system('defaults write com.apple.dock expose-animation-duration -float 0.15')
 os.system('defaults write com.apple.dock autohide-delay -float 0')
 os.system('defaults write com.apple.dock autohide-time-modifier -float 0.3')
 os.system('defaults write NSGlobalDomain com.apple.springing.delay -float 0.5')
 os.system('killall Dock')
-
-print "Enabling automatic Brew updates & upgrades..."
-os.system('brew tap domt4/autoupdate')
-os.system('brew autoupdate --start --upgrade')
 
 # Make Google Chrome the default browser
 os.system('open -a "Google Chrome" --args --make-default-browser')
@@ -213,16 +200,15 @@ os.system('duti -s com.googlecode.iterm2 .command all')
 
 # Make VSCode the default app for development related files
 os.system('duti -s com.microsoft.VSCode .js all')
+os.system('duti -s com.microsoft.VSCode .jsx all')
 os.system('duti -s com.microsoft.VSCode .ts all')
+os.system('duti -s com.microsoft.VSCode .tsx all')
 os.system('duti -s com.microsoft.VSCode .json all')
 os.system('duti -s com.microsoft.VSCode .sh all')
 os.system('duti -s com.microsoft.VSCode .yml all')
 os.system('duti -s com.microsoft.VSCode .py all')
 os.system('duti -s com.microsoft.VSCode .xml all')
 os.system('duti -s com.microsoft.VSCode .md all')
-
-# Open Spectacle (Needs to be enabled manually)
-os.system('open -a "Spectacle"')
 
 # Clean Up Brew
 os.system('brew cleanup && brew cask cleanup')
