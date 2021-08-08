@@ -56,9 +56,8 @@ os.system('/usr/bin/ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Home
 os.system('brew tap homebrew/cask')
 os.system('brew tap homebrew/services')
 os.system('brew tap homebrew/cask-versions')
-os.system('brew tap homebrew/casek-fonts')
-os.system('brew tap 0xmachos/homebrew-mosl')
-os.system('brew update && brew upgrade && brew cleanup && brew cask cleanup')
+os.system('brew tap AdoptOpenJDK/openjdk')
+os.system('brew update && brew upgrade && brew cleanup')
 
 # Install Languages
 print "---> Installing Git+NodeJS+Python+Ruby+JDK+React-Native...\n"
@@ -90,8 +89,8 @@ os.system("sudo xcode-select --switch /Applications/Xcode.app") # Select Xcode a
 print "---> Installing Quicklook helpers...\n"
 os.system('brew install --cask qlcolorcode qlmarkdown quicklook-csv quicklook-json webpquicklook suspicious-package epubquicklook qlstephen qlprettypatch font-hack qlvideo')
 
-print "---> Installing fonts...\n"
-os.system('brew install --cask font-dosis font-droid-sans-mono-for-powerline font-open-sans font-open-sans-condensed font-roboto font-roboto-mono font-roboto-condensed font-roboto-slab font-consolas-for-powerline font-dejavu-sans font-dejavu-sans-mono-for-powerline font-inconsolata font-inconsolata-for-powerline font-lato font-menlo-for-powerline font-meslo-lg font-meslo-for-powerline font-noto-sans font-noto-serif font-source-sans-pro font-source-serif-pro font-ubuntu font-pt-mono font-pt-sans font-pt-serif font-fira-mono font-fira-mono-for-powerline font-fira-code font-fira-sans font-source-code-pro')
+print "---> Installing powerline fonts...\n"
+os.system('git clone https://github.com/powerline/fonts.git --depth=1 && ./fonts/install.sh')
 
 print "---> Installing essential apps...\n"
 os.system('brew install --cask 1password iterm2 istat-menus rectangle the-unarchiver authy alt-tab')
