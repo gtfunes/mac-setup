@@ -67,6 +67,7 @@ os.system('brew unlink python && brew link --overwrite python')
 os.system('brew install watchman')
 os.system('brew install java')
 os.system('npm install -g react-native-cli')
+os.system('brew install swiftlint')
 os.system('brew install git-flow git-lfs')
 os.system('git lfs install')
 
