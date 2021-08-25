@@ -61,9 +61,10 @@ os.system('brew update && brew upgrade && brew cleanup')
 
 # Install Languages
 print "---> Installing Git+NodeJS+Python+Ruby+JDK+React-Native...\n"
-os.system('brew install git node ruby python python3 nvm rbenv')
-os.system('brew link --overwrite git node python python3 ruby')
+os.system('brew install git ruby python python3 nvm rbenv')
+os.system('brew link --overwrite git python python3 ruby')
 os.system('brew unlink python && brew link --overwrite python')
+os.system('nvm install lts && nvm alias default lts')
 os.system('brew install watchman')
 os.system('brew install java')
 os.system('npm install -g react-native-cli')
