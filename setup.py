@@ -2,8 +2,6 @@
 # -*- coding: utf-8 -*-
 
 import os
-import json
-import urllib2
 import subprocess
 
 name = ''
@@ -11,34 +9,31 @@ email = ''
 
 # Check for Xcode Command Line Tools
 if os.system('xcode-select -p') != 0:
-    print "Installing XCode Command Line Tools..."
+    print("Installing XCode Command Line Tools...")
     os.system('xcode-select --install')
-    print "**************************************************************"
-    print "  Install XCode Command Line Tools and run this script again  "
-    print "**************************************************************"
-    exit()
+    print("**************************************************************")
+    print("  Install XCode Command Line Tools and run this script again  ")
+    print("**************************************************************")
 
 # User
 while name == '':
-    name = raw_input("What's your name?\n").strip()
+    name = raw_input("What's your name?\n").strip() # type: ignore
 
 # Email
 while email == '' or '@' not in email:
-    email = raw_input("What's your email?\n").strip()
-
+    email = raw_input("What's your email?\n").strip() # type: ignore
 
 def show_notification(text):
     os.system('osascript -e \'display notification "' +
               text + '" with title "Mac Setup"\' > /dev/null')
 
-
-print "Hey %s, lets setup your new Mac!" % name
-print "You'll be asked for your password a few times during this process"
-print "*************************************"
+print("Hey %s, lets setup your new Mac!" % name)
+print("You'll be asked for your password a few times during this process")
+print("*************************************")
 
 # Create a Private Key
 if not os.path.isfile(os.path.expanduser("~") + '/.ssh/id_rsa.pub'):
-    print "---> Creating your private key...\n"
+    print("---> Creating your private key...\n")
     os.system('ssh-keygen -t rsa -b 4096 -f ~/.ssh/id_rsa -N "" -C "%s"' % email)
 
 # Set computer name & git info
@@ -50,7 +45,7 @@ os.system('git config --global user.name "%s"' % name)
 os.system('git config --global user.email "%s"' % email)
 
 # Install Brew & Brew Cask
-print "---> Installing Brew & Brew Cask...\n"
+print("---> Installing Brew & Brew Cask...\n")
 os.system('touch ~/.bash_profile')
 os.system('/usr/bin/ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"')
 os.system('brew tap homebrew/core')
@@ -60,7 +55,7 @@ os.system('brew tap homebrew/cask-versions')
 os.system('brew update && brew upgrade && brew cleanup')
 
 # Install Languages
-print "---> Installing Git+NodeJS+Python+Ruby+JDK+React-Native...\n"
+print("---> Installing Git+NodeJS+Python+Ruby+JDK+React-Native...\n")
 os.system('brew install git ruby python python3 nvm rbenv')
 os.system('brew link --overwrite git python python3 ruby')
 os.system('brew unlink python && brew link --overwrite python')
@@ -73,12 +68,12 @@ os.system('brew install git-flow git-lfs')
 os.system('git lfs install')
 
 # Install some useful dev stuff
-print "---> Installing useful stuff...\n"
+print("---> Installing useful stuff...\n")
 os.system('brew install graphicsmagick curl wget sqlite libpng libxml2 openssl duti git-extras')
 os.system('brew install bat tldr tree')
 
 # Install Apps only available via MAS
-print "---> Installing MAS apps...\n"
+print("---> Installing MAS apps...\n")
 os.system('brew install mas')
 os.system('mas signin --dialog "%s"' % email)  # We need to sign in first!
 os.system('mas install 937984704')  # Install Amphetamine
@@ -86,13 +81,13 @@ os.system('mas install 497799835')  # Install Xcode
 os.system("sudo xcode-select --switch /Applications/Xcode.app") # Select Xcode app to avoid issues running apps later
 
 # Install Apps
-print "---> Installing Quicklook helpers...\n"
+print("---> Installing Quicklook helpers...\n")
 os.system('brew install --cask qlcolorcode qlmarkdown quicklook-csv quicklook-json webpquicklook suspicious-package epubquicklook qlstephen qlprettypatch font-hack qlvideo')
 
-print "---> Installing powerline fonts...\n"
+print("---> Installing powerline fonts...\n")
 os.system('git clone https://github.com/powerline/fonts.git --depth=1 && ./fonts/install.sh')
 
-print "---> Installing essential apps...\n"
+print("---> Installing essential apps...\n")
 os.system('brew install --cask 1password iterm2 istat-menus rectangle the-unarchiver authy alt-tab')
 os.system(
     'brew install --cask google-chrome github visual-studio-code qbittorrent daisydisk macdown')
@@ -104,20 +99,20 @@ os.system('brew install --cask android-studio')
 os.system('brew install android-platform-tools')
 
 os.system('brew cask fetch qlimagesize')
-print "---> Installing QLImageSize...\n"
+print("---> Installing QLImageSize...\n")
 show_notification("We need your password:")
 os.system('brew install --cask qlimagesize')
 
-print "---> Installing Cocoapods...\n"
+print ("---> Installing Cocoapods...\n")
 show_notification("We need your password:")
 os.system('sudo gem install cocoapods')
 
-print "---> Installing Fastlane...\n"
+print ("---> Installing Fastlane...\n")
 show_notification("We need your password:")
 os.system('sudo gem install fastlane --verbose')
 
 # Oh-My-ZSH
-print "---> Installing Oh-My-Zsh with Dracula theme...\n"
+print("---> Installing Oh-My-Zsh with Dracula theme...\n")
 show_notification("We need your password")
 
 # Adapted from https://raw.githubusercontent.com/robbyrussell/oh-my-zsh/master/tools/install.sh
@@ -151,11 +146,11 @@ if (subprocess.call(['bash', '-c', 'diff <(tail -n +6 ~/.zshrc) <(tail -n +6  ~/
 # Remove the 'last login' message
 os.system('touch ~/.hushlogin')
 
-print "---> Dracula theme will be downloaded to your Desktop, set it later from iTerm profile color settings!\n"
+print("---> Dracula theme will be downloaded to your Desktop, set it later from iTerm profile color settings!\n")
 os.system('git clone https://github.com/dracula/iterm.git ~/Desktop/dracula-theme/')
 
 # Random OSX Settings
-print "---> Tweaking OSX settings...\n"
+print("---> Tweaking OSX settings...\n")
 
 # Finder: show hidden files by default
 os.system('defaults write com.apple.finder AppleShowAllFiles -bool true')
@@ -186,7 +181,7 @@ os.system(
 os.system(
     'defaults write com.google.Chrome AppleEnableSwipeNavigateWithScrolls -bool false')
 
-print "---> Tweaking system animations...\n"
+print("---> Tweaking system animations...\n")
 os.system('defaults write NSGlobalDomain NSWindowResizeTime -float 0.1')
 os.system('defaults write com.apple.dock expose-animation-duration -float 0.15')
 os.system('defaults write com.apple.dock autohide-delay -float 0')
@@ -219,8 +214,8 @@ os.system('brew cleanup && brew cask cleanup')
 show_notification("We need your password")
 os.system('sudo nvram SystemAudioVolume=%00')
 
-print "*************************************"
+print("*************************************")
 show_notification("All done!")
 
-# Change the shell to zsh
+# Change the default shell to zsh
 os.system('chsh -s /bin/zsh &> /dev/null')
