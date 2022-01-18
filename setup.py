@@ -79,9 +79,7 @@ os.system('brew install bat tldr tree')
 print("---> Installing MAS apps...\n")
 os.system('brew install mas')
 os.system('mas signin --dialog "%s"' % email)  # We need to sign in first!
-os.system('mas install 937984704')  # Install Amphetamine
-os.system('mas install 497799835')  # Install Xcode
-os.system("sudo xcode-select --switch /Applications/Xcode.app") # Select Xcode app to avoid issues running apps later
+os.system('mas install 937984704') # Install Amphetamine
 
 # Install Apps
 print("---> Installing Quicklook helpers...\n")
@@ -100,6 +98,11 @@ os.system(
     'brew install --cask docker sequel-pro cyberduck imageoptim handbrake postman google-drive adobe-creative-cloud')
 os.system('brew install --cask android-studio')
 os.system('brew install android-platform-tools')
+os.system('brew install robotsandpencils/made/xcodes aria2')
+
+# Install latest Xcode
+os.system('xcodes install --latest')
+os.system('sudo xcode-select --switch /Applications/Xcode.app') # Select Xcode app to avoid issues running apps later
 
 os.system('brew cask fetch qlimagesize')
 print("---> Installing QLImageSize...\n")
