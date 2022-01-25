@@ -137,13 +137,14 @@ if os.system('test -f ~/.zshrc') != 0:
 
 os.system('git clone git://github.com/zsh-users/zsh-autosuggestions $ZSH_CUSTOM/plugins/zsh-autosuggestions')
 os.system('git clone git://github.com/zsh-users/zsh-syntax-highlighting $ZSH_CUSTOM/plugins/zsh-syntax-highlighting')
+os.system('git clone git://github.com/valentinocossar/vscode $ZSH_CUSTOM/plugins/vscode')
 
 # If the user has the default .zshrc tune it a bit
 if (subprocess.call(['bash', '-c', 'diff <(tail -n +6 ~/.zshrc) <(tail -n +6  ~/.oh-my-zsh/templates/zshrc.zsh-template) > /dev/null']) == 0):
     # Agnoster Theme
     os.system('sed -i -e \'s/robbyrussell/agnoster/g\' ~/.zshrc &> /dev/null')
     # Plugins
-    os.system('sed -i -e \'s/plugins=(git)/plugins=(git brew sublime node npm docker zsh-autosuggestions zsh-syntax-highlighting colored-man-pages copydir copyfile extract)/g\' ~/.zshrc &> /dev/null')
+    os.system('sed -i -e \'s/plugins=(git)/plugins=(git brew vscode node npm docker zsh-autosuggestions zsh-syntax-highlighting colored-man-pages copydir copyfile extract)/g\' ~/.zshrc &> /dev/null')
     # Don't show the user in the prompt
     os.system('echo "DEFAULT_USER=\`whoami\`" >> ~/.zshrc')
     os.system(
