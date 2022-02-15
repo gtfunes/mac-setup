@@ -89,7 +89,7 @@ print("---> Installing powerline fonts...\n")
 os.system('git clone https://github.com/powerline/fonts.git --depth=1 && ./fonts/install.sh')
 
 print("---> Installing essential apps...\n")
-os.system('brew install --cask 1password iterm2 istat-menus rectangle the-unarchiver authy alt-tab')
+os.system('brew install --cask 1password iterm2 istat-menus rectangle the-unarchiver authy alt-tab alfred')
 os.system(
     'brew install --cask google-chrome github visual-studio-code qbittorrent daisydisk macdown')
 os.system(
