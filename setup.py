@@ -100,10 +100,6 @@ os.system('brew install --cask android-studio')
 os.system('brew install android-platform-tools')
 os.system('brew install robotsandpencils/made/xcodes aria2')
 
-# Install latest Xcode
-os.system('xcodes install --latest')
-os.system('sudo xcode-select --switch /Applications/Xcode.app') # Select Xcode app to avoid issues running apps later
-
 os.system('brew cask fetch qlimagesize')
 print("---> Installing QLImageSize...\n")
 show_notification("We need your password:")
@@ -196,6 +192,9 @@ os.system('defaults write com.apple.dock autohide-time-modifier -float 0.3')
 os.system('defaults write NSGlobalDomain com.apple.springing.delay -float 0.5')
 os.system('killall Dock')
 
+# Set default apps
+print("---> Setting default applications...\n")
+
 # Make Google Chrome the default browser
 os.system('open -a "Google Chrome" --args --make-default-browser')
 
@@ -215,14 +214,22 @@ os.system('duti -s com.microsoft.VSCode .xml all')
 os.system('duti -s com.microsoft.VSCode .md all')
 
 # Clean Up Brew
+print("--->Cleaning up Brew...\n")
 os.system('brew cleanup && brew cask cleanup')
 
 # Mute startup sound
+print("---> Muting system startup sound...\n")
 show_notification("We need your password")
 os.system('sudo nvram SystemAudioVolume=%00')
 
+# Change the default shell to zsh
+print("---> Switching default shell to zsh...\n")
+os.system('chsh -s /bin/zsh &> /dev/null')
+
+# Install latest Xcode
+print("---> Installing latest Xcode (this will take a while)...\n")
+os.system('xcodes install --latest')
+os.system('sudo xcode-select --switch /Applications/Xcode.app') # Select Xcode app to avoid issues running apps later
+
 print("*************************************")
 show_notification("All done!")
-
-# Change the default shell to zsh
-os.system('chsh -s /bin/zsh &> /dev/null')
