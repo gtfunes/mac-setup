@@ -7,14 +7,6 @@ import subprocess
 name = ''
 email = ''
 
-# Check for Xcode Command Line Tools
-if os.system('xcode-select -p') != 0:
-    print("Installing XCode Command Line Tools...")
-    os.system('xcode-select --install')
-    print("**************************************************************")
-    print("  Install XCode Command Line Tools and run this script again  ")
-    print("**************************************************************")
-
 # User
 while name == '':
     name = raw_input("What's your name?\n").strip() # type: ignore
