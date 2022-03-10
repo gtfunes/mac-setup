@@ -75,7 +75,7 @@ os.system('mas install 937984704') # Install Amphetamine
 
 # Install Apps
 print("---> Installing Quicklook helpers...\n")
-os.system('brew install --cask qlcolorcode qlmarkdown quicklook-csv quicklook-json webpquicklook suspicious-package epubquicklook qlstephen qlprettypatch font-hack qlvideo')
+os.system('brew install --cask qlcolorcode qlmarkdown quicklook-csv quicklook-json webpquicklook suspicious-package epubquicklook qlstephen qlprettypatch qlvideo')
 
 print("---> Installing powerline fonts...\n")
 os.system('git clone https://github.com/powerline/fonts.git --depth=1 && ./fonts/install.sh')
