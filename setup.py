@@ -67,6 +67,7 @@ os.system('git lfs install')
 # Install some useful dev stuff
 print("---> Installing useful stuff...\n")
 os.system('brew install graphicsmagick curl wget sqlite libpng libxml2 openssl duti git-extras')
+os.system('brew install pkg-config cairo pixman pango libpng jpeg giflib librsvg')
 os.system('brew install bat tldr tree')
 
 # Install Apps only available via MAS
