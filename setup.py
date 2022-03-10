@@ -47,7 +47,7 @@ os.system('git config --global user.email "%s"' % email)
 # Install Brew & Brew Cask
 print("---> Installing Brew & Brew Cask...\n")
 os.system('touch ~/.bash_profile')
-os.system('/usr/bin/ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"')
+os.system('/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"')
 os.system('brew tap homebrew/core')
 os.system('brew tap homebrew/cask')
 os.system('brew tap homebrew/services')
