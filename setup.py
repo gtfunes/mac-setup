@@ -36,8 +36,8 @@ os.system('sudo defaults write /Library/Preferences/SystemConfiguration/com.appl
 os.system('git config --global user.name "%s"' % name)
 os.system('git config --global user.email "%s"' % email)
 
-# Install Brew & Brew Cask
-print("---> Installing Brew & Brew Cask...\n")
+# Install Brew
+print("---> Installing Brew...\n")
 os.system('touch ~/.bash_profile')
 os.system('/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"')
 os.system('brew tap homebrew/core')
@@ -53,7 +53,8 @@ os.system('brew link --overwrite git python python3')
 os.system('brew unlink python && brew link --overwrite python')
 os.system('nvm install lts && nvm alias default lts')
 os.system('brew install watchman')
-os.system('brew install java')
+os.system('brew install java11')
+os.system('sudo ln -sfn /usr/local/opt/openjdk@11/libexec/openjdk.jdk /Library/Java/JavaVirtualMachines/openjdk-11.jdk')
 os.system('npm install -g react-native-cli')
 os.system('brew install ios-deploy')
 os.system('brew tap facebook/fb')
@@ -92,7 +93,7 @@ os.system('brew install --cask android-studio')
 os.system('brew install android-platform-tools')
 os.system('brew install robotsandpencils/made/xcodes aria2')
 
-os.system('brew cask fetch qlimagesize')
+os.system('brew install --cask fetch qlimagesize')
 print("---> Installing QLImageSize...\n")
 show_notification("We need your password:")
 os.system('brew install --cask qlimagesize')
@@ -207,7 +208,7 @@ os.system('duti -s com.microsoft.VSCode .md all')
 
 # Clean Up Brew
 print("--->Cleaning up Brew...\n")
-os.system('brew cleanup && brew cask cleanup')
+os.system('brew cleanup')
 
 # Mute startup sound
 print("---> Muting system startup sound...\n")
