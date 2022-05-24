@@ -46,7 +46,7 @@ os.system('brew tap homebrew/services')
 os.system('brew tap homebrew/cask-versions')
 os.system('brew update && brew upgrade && brew cleanup')
 
-# Install Languages
+# Install languages and dev tools
 print("---> Installing Git+NodeJS+Python+Ruby+JDK+React-Native...\n")
 os.system('brew install git python python3 nvm rbenv')
 os.system('brew link --overwrite git python python3')
@@ -92,6 +92,8 @@ os.system(
     'brew install --cask spotify slack whatsapp notion vlc zoomus cleanmymac discord calibre')
 os.system(
     'brew install --cask docker sequel-pro cyberduck imageoptim handbrake postman google-drive adobe-creative-cloud')
+os.system('brew tap jakehilborn/jakehilborn')
+os.system('brew install displayplacer')
 os.system('brew install --cask android-studio')
 os.system('brew install android-platform-tools')
 os.system('brew install robotsandpencils/made/xcodes aria2')
