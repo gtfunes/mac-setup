@@ -85,13 +85,13 @@ print("---> Installing powerline fonts...\n")
 os.system('git clone https://github.com/powerline/fonts.git --depth=1 && ./fonts/install.sh')
 
 print("---> Installing essential apps...\n")
-os.system('brew install --cask 1password 1password-cli iterm2 istat-menus rectangle the-unarchiver authy alt-tab alfred')
+os.system('brew install --cask 1password 1password-cli iterm2 istat-menus rectangle the-unarchiver authy alt-tab raycast bartender')
 os.system(
     'brew install --cask google-chrome github visual-studio-code qbittorrent daisydisk macdown')
 os.system(
     'brew install --cask spotify slack whatsapp notion vlc zoomus cleanmymac discord calibre')
 os.system(
-    'brew install --cask docker sequel-pro cyberduck imageoptim handbrake postman google-drive adobe-creative-cloud')
+    'brew install --cask docker cyberduck imageoptim handbrake postman google-drive adobe-creative-cloud')
 os.system('brew tap jakehilborn/jakehilborn')
 os.system('brew install displayplacer')
 os.system('brew install --cask android-studio')
