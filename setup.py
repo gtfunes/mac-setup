@@ -1,4 +1,4 @@
-#!/Library/Frameworks/Python.framework/Versions/2.7/bin/python
+#!/usr/bin/python3
 # -*- coding: utf-8 -*-
 
 import os
@@ -9,11 +9,11 @@ email = ''
 
 # User
 while name == '':
-    name = raw_input("What's your name?\n").strip() # type: ignore
+    name = input("What's your name?\n").strip() # type: ignore
 
 # Email
 while email == '' or '@' not in email:
-    email = raw_input("What's your email?\n").strip() # type: ignore
+    email = input("What's your email?\n").strip() # type: ignore
 
 def show_notification(text):
     os.system('osascript -e \'display notification "' +
