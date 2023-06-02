@@ -89,7 +89,7 @@ os.system('brew install --cask 1password 1password-cli iterm2 rectangle the-unar
 os.system(
     'brew install --cask google-chrome github visual-studio-code qbittorrent daisydisk macdown')
 os.system(
-    'brew install --cask spotify slack whatsapp notion vlc zoom cleanmymac discord calibre')
+    'brew install --cask spotify slack whatsapp telegram notion vlc zoom cleanmymac discord calibre')
 os.system(
     'brew install --cask docker cyberduck imageoptim handbrake postman google-drive adobe-creative-cloud')
 os.system('brew tap jakehilborn/jakehilborn')
