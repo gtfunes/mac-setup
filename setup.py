@@ -76,6 +76,7 @@ os.system('brew install mas')
 os.system('mas signin --dialog "%s"' % email)  # We need to sign in first!
 os.system('mas install 937984704') # Install Amphetamine
 os.system('mas install 1388020431') # Install DevCleaner for Xcode
+os.system('mas install 1522267256') # Install Shareful
 
 # Install Apps
 print("---> Installing Quicklook helpers...\n")
