@@ -65,6 +65,12 @@ os.system('brew install graphicsmagick curl wget sqlite libpng libxml2 openssl d
 os.system('brew install pkg-config cairo pixman pango libpng jpeg giflib librsvg')
 os.system('brew install bat tldr tree')
 
+# Install AI tools
+print("---> Installing AI tools...\n")
+os.system('brew install --cask chatgpt')
+os.system('brew install --cask claude')
+os.system('brew install --cask claude-code')
+
 # Install Apps only available via MAS
 print("---> Installing MAS apps...\n")
 os.system('brew install mas')
