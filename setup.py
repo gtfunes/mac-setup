@@ -42,22 +42,19 @@ os.system('touch ~/.bash_profile')
 os.system('/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"')
 os.system('(echo; echo \'eval "$(/opt/homebrew/bin/brew shellenv)"\') >> /Users/gtfunes/.zprofile')
 os.system('eval "$(/opt/homebrew/bin/brew shellenv)"')
-os.system('brew tap homebrew/core')
-os.system('brew tap homebrew/cask')
-os.system('brew tap homebrew/services')
-os.system('brew tap homebrew/cask-versions')
 os.system('brew update && brew upgrade && brew cleanup')
 
 # Install languages and dev tools
 print("---> Installing Git+NodeJS+Python+Ruby+JDK+React-Native...\n")
 os.system('brew install git python python3 nvm rbenv')
+os.system('nvm install --lts && nvm use --lts && nvm alias default stable')
+os.system('rbenv install 3.4.8 && rbenv global 3.4.8')
+os.system('rbenv init')
 os.system('brew link --overwrite git python python3')
 os.system('brew unlink python && brew link --overwrite python')
-os.system('nvm install lts && nvm alias default lts')
 os.system('brew install watchman')
 os.system('sudo softwareupdate --install-rosetta')
-os.system('brew tap adoptopenjdk/openjdk')
-os.system('brew install adoptopenjdk11')
+os.system('brew install openjdk@11')
 os.system('sudo ln -sfn /usr/local/opt/openjdk@11/libexec/openjdk.jdk /Library/Java/JavaVirtualMachines/openjdk-11.jdk')
 os.system('brew install git-flow git-lfs')
 os.system('git lfs install')
@@ -71,14 +68,13 @@ os.system('brew install bat tldr tree')
 # Install Apps only available via MAS
 print("---> Installing MAS apps...\n")
 os.system('brew install mas')
-os.system('mas signin --dialog "%s"' % email)  # We need to sign in first!
 os.system('mas install 937984704') # Install Amphetamine
 os.system('mas install 1388020431') # Install DevCleaner for Xcode
 os.system('mas install 1522267256') # Install Shareful
 
 # Install Apps
 print("---> Installing Quicklook helpers...\n")
-os.system('brew install --cask qlmarkdown quicklook-csv quicklook-json webpquicklook suspicious-package epubquicklook qlstephen qlprettypatch qlvideo')
+os.system('brew install --cask quicklook-csv quicklook-json webpquicklook suspicious-package qlstephen qlprettypatch qlvideo')
 
 print("---> Installing powerline fonts...\n")
 os.system('git clone https://github.com/powerline/fonts.git --depth=1 && ./fonts/install.sh')
@@ -86,19 +82,14 @@ os.system('git clone https://github.com/powerline/fonts.git --depth=1 && ./fonts
 print("---> Installing essential apps...\n")
 os.system('brew install --cask 1password 1password-cli iterm2 rectangle the-unarchiver alt-tab raycast')
 os.system(
-    'brew install --cask google-chrome github visual-studio-code daisydisk macdown')
+    'brew install --cask google-chrome github visual-studio-code daisydisk')
 os.system(
     'brew install --cask slack vlc zoom')
 os.system(
     'brew install --cask docker cyberduck imageoptim handbrake postman')
 os.system('brew install --cask android-studio')
 os.system('brew install android-platform-tools')
-os.system('brew install xcodesorg/made/xcodes aria2')
-
-os.system('brew install --cask fetch qlimagesize')
-print("---> Installing QLImageSize...\n")
-show_notification("We need your password:")
-os.system('brew install --cask qlimagesize')
+os.system('brew install xcodes aria2')
 
 print ("---> Installing Cocoapods...\n")
 show_notification("We need your password:")
@@ -109,43 +100,31 @@ show_notification("We need your password:")
 os.system('sudo gem install fastlane --verbose')
 
 # Oh-My-ZSH
-print("---> Installing Oh-My-Zsh with Dracula theme...\n")
+print("---> Installing Oh-My-Zsh...\n")
 show_notification("We need your password")
 
 # Adapted from https://raw.githubusercontent.com/robbyrussell/oh-my-zsh/master/tools/install.sh
-if os.system('test -n "$ZSH"') != 0:
-    os.system('export ZSH=~/.oh-my-zsh')
-
-if os.system('test -n "$ZSH_CUSTOM"') != 0:
-    os.system('export ZSH_CUSTOM=~/.oh-my-zsh/custom')
-
-if os.system('test -d "$ZSH"') != 0:
-    os.system(
-        'umask g-w,o-w && git clone --depth=1 https://github.com/robbyrussell/oh-my-zsh.git $ZSH')
+os.system('umask g-w,o-w && git clone --depth=1 https://github.com/robbyrussell/oh-my-zsh.git ~/.oh-my-zsh')
 
 if os.system('test -f ~/.zshrc') != 0:
-    os.system('cp $ZSH/templates/zshrc.zsh-template ~/.zshrc')
+    os.system('cp ~/.oh-my-zsh/templates/zshrc.zsh-template ~/.zshrc')
 
-os.system('git clone git://github.com/zsh-users/zsh-autosuggestions $ZSH_CUSTOM/plugins/zsh-autosuggestions')
-os.system('git clone git://github.com/zsh-users/zsh-syntax-highlighting $ZSH_CUSTOM/plugins/zsh-syntax-highlighting')
-os.system('git clone git://github.com/valentinocossar/vscode $ZSH_CUSTOM/plugins/vscode')
+os.system('git clone git://github.com/zsh-users/zsh-autosuggestions ~/.oh-my-zsh/custom/plugins/zsh-autosuggestions')
+os.system('git clone git://github.com/zsh-users/zsh-syntax-highlighting ~/.oh-my-zsh/custom/plugins/zsh-syntax-highlighting')
+os.system('git clone git://github.com/valentinocossar/vscode ~/.oh-my-zsh/custom/plugins/vscode')
 
 # If the user has the default .zshrc tune it a bit
 if (subprocess.call(['bash', '-c', 'diff <(tail -n +6 ~/.zshrc) <(tail -n +6  ~/.oh-my-zsh/templates/zshrc.zsh-template) > /dev/null']) == 0):
     # Agnoster Theme
     os.system('sed -i -e \'s/robbyrussell/agnoster/g\' ~/.zshrc &> /dev/null')
     # Plugins
-    os.system('sed -i -e \'s/plugins=(git)/plugins=(git brew vscode node npm docker zsh-autosuggestions zsh-syntax-highlighting colored-man-pages copydir copyfile extract)/g\' ~/.zshrc &> /dev/null')
+    os.system('sed -i -e \'s/plugins=(git)/plugins=(git brew vscode node npm docker zsh-autosuggestions zsh-syntax-highlighting colored-man-pages copyfile extract)/g\' ~/.zshrc &> /dev/null')
     # Don't show the user in the prompt
     os.system('echo "DEFAULT_USER=\`whoami\`" >> ~/.zshrc')
-    os.system(
-        'echo "export NVM_DIR=\"\$HOME/.nvm\"\n[ -s \"\$NVM_DIR/nvm.sh\" ] && . \"\$NVM_DIR/nvm.sh\" # This loads nvm" >> ~/.zshrc')
+    os.system('echo "export NVM_DIR=\"$HOME/.nvm\" \n [ -s \"/opt/homebrew/opt/nvm/nvm.sh\" ] && \. \"/opt/homebrew/opt/nvm/nvm.sh\" # This loads nvm \n [ -s \"/opt/homebrew/opt/nvm/etc/bash_completion.d/nvm\" ] && \. \"/opt/homebrew/opt/nvm/etc/bash_completion.d/nvm\"  # This loads nvm bash_completion" >> ~/.zshrc')
 
 # Remove the 'last login' message
 os.system('touch ~/.hushlogin')
-
-print("---> Dracula theme will be downloaded to your Desktop, set it later from iTerm profile color settings!\n")
-os.system('git clone https://github.com/dracula/iterm.git ~/Desktop/dracula-theme/')
 
 # Random OSX Settings
 print("---> Tweaking OSX settings...\n")
