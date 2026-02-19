@@ -59,8 +59,6 @@ os.system('sudo softwareupdate --install-rosetta')
 os.system('brew tap adoptopenjdk/openjdk')
 os.system('brew install adoptopenjdk11')
 os.system('sudo ln -sfn /usr/local/opt/openjdk@11/libexec/openjdk.jdk /Library/Java/JavaVirtualMachines/openjdk-11.jdk')
-os.system('npm install -g react-native-cli')
-os.system('brew install ios-deploy')
 os.system('brew install git-flow git-lfs')
 os.system('git lfs install')
 
@@ -86,18 +84,16 @@ print("---> Installing powerline fonts...\n")
 os.system('git clone https://github.com/powerline/fonts.git --depth=1 && ./fonts/install.sh')
 
 print("---> Installing essential apps...\n")
-os.system('brew install --cask 1password 1password-cli iterm2 rectangle the-unarchiver authy alt-tab raycast bartender')
+os.system('brew install --cask 1password 1password-cli iterm2 rectangle the-unarchiver alt-tab raycast')
 os.system(
-    'brew install --cask google-chrome github visual-studio-code qbittorrent daisydisk macdown')
+    'brew install --cask google-chrome github visual-studio-code daisydisk macdown')
 os.system(
-    'brew install --cask spotify slack whatsapp telegram notion vlc zoom cleanmymac discord calibre')
+    'brew install --cask slack vlc zoom')
 os.system(
-    'brew install --cask docker cyberduck imageoptim handbrake postman google-drive adobe-creative-cloud')
-os.system('brew tap jakehilborn/jakehilborn')
-os.system('brew install displayplacer')
+    'brew install --cask docker cyberduck imageoptim handbrake postman')
 os.system('brew install --cask android-studio')
 os.system('brew install android-platform-tools')
-os.system('brew install robotsandpencils/made/xcodes aria2')
+os.system('brew install xcodesorg/made/xcodes aria2')
 
 os.system('brew install --cask fetch qlimagesize')
 print("---> Installing QLImageSize...\n")
@@ -229,10 +225,6 @@ os.system('chsh -s /bin/zsh &> /dev/null')
 print("---> Installing latest Xcode (this will take a while)...\n")
 os.system('xcodes install --latest')
 os.system('sudo xcode-select --switch /Applications/Xcode.app') # Select Xcode app to avoid issues running apps later
-os.system('brew install swiftlint')
-os.system('brew tap facebook/fb')
-os.system('brew install idb-companion')
-os.system('pip3 install fb-idb')
 
 print("*************************************")
 show_notification("All done!")
