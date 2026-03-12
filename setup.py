@@ -55,7 +55,7 @@ os.system('brew unlink python && brew link --overwrite python')
 os.system('brew install watchman')
 os.system('sudo softwareupdate --install-rosetta')
 os.system('brew install openjdk@11')
-os.system('sudo ln -sfn /usr/local/opt/openjdk@11/libexec/openjdk.jdk /Library/Java/JavaVirtualMachines/openjdk-11.jdk')
+os.system('sudo ln -sfn $HOMEBREW_PREFIX/opt/openjdk@11/libexec/openjdk.jdk /Library/Java/JavaVirtualMachines/openjdk-11.jdk')
 os.system('brew install git-flow git-lfs')
 os.system('git lfs install')
 
