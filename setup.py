@@ -1,215 +1,307 @@
 #!/usr/bin/python3
 # -*- coding: utf-8 -*-
 
+import glob
 import os
+import shlex
 import subprocess
+import tempfile
 
-name = ''
-email = ''
+def run(cmd, check=False, sudo=False):
+    """Run a shell command with logging."""
+    if sudo:
+        cmd = f"sudo {cmd}"
+    result = subprocess.run(cmd, shell=True)
+    if check and result.returncode != 0:
+        print(f"WARNING: Command failed (exit {result.returncode}): {cmd}")
+    return result.returncode
 
-# User
-while name == '':
-    name = input("What's your name?\n").strip() # type: ignore
-
-# Email
-while email == '' or '@' not in email:
-    email = input("What's your email?\n").strip() # type: ignore
+def run_args(args, check=False):
+    """Run a command with an argument list (no shell injection risk)."""
+    result = subprocess.run(args)
+    if check and result.returncode != 0:
+        print(f"WARNING: Command failed (exit {result.returncode}): {' '.join(args)}")
+    return result.returncode
 
 def show_notification(text):
-    os.system('osascript -e \'display notification "' +
-              text + '" with title "Mac Setup"\' > /dev/null')
+    subprocess.run([
+        "osascript", "-e",
+        f'display notification "{text}" with title "Mac Setup"'
+    ], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
 
-print("Hey %s, lets setup your new Mac!" % name)
+# User
+name = ""
+email = ""
+
+while name == "":
+    name = input("What's your name?\n").strip()
+
+while email == "" or "@" not in email:
+    email = input("What's your email?\n").strip()
+
+safe_name = shlex.quote(name)
+safe_email = shlex.quote(email)
+
+print(f"Hey {name}, lets setup your new Mac!")
 print("You'll be asked for your password a few times during this process")
 print("*************************************")
 
 # Create a Private Key
-if not os.path.isfile(os.path.expanduser("~") + '/.ssh/id_rsa.pub'):
+ssh_pub = os.path.expanduser("~/.ssh/id_rsa.pub")
+if not os.path.isfile(ssh_pub):
     print("---> Creating your private key...\n")
-    os.system('ssh-keygen -t rsa -b 4096 -f ~/.ssh/id_rsa -N "" -C "%s"' % email)
+    run_args(["ssh-keygen", "-t", "rsa", "-b", "4096", "-f",
+              os.path.expanduser("~/.ssh/id_rsa"), "-N", "", "-C", email])
 
 # Set computer name & git info
-os.system('sudo scutil --set ComputerName "%s"' % name)
-os.system('sudo scutil --set HostName "%s"' % name)
-os.system('sudo scutil --set LocalHostName "%s"' % name.replace(' ', '-'))
-os.system('sudo defaults write /Library/Preferences/SystemConfiguration/com.apple.smb.server NetBIOSName -string "%s"' % name)
-os.system('git config --global user.name "%s"' % name)
-os.system('git config --global user.email "%s"' % email)
+local_hostname = name.replace(" ", "-")
+run(f"sudo scutil --set ComputerName {safe_name}")
+run(f"sudo scutil --set HostName {safe_name}")
+run(f"sudo scutil --set LocalHostName {shlex.quote(local_hostname)}")
+run(f"sudo defaults write /Library/Preferences/SystemConfiguration/com.apple.smb.server NetBIOSName -string {safe_name}")
+run_args(["git", "config", "--global", "user.name", name])
+run_args(["git", "config", "--global", "user.email", email])
 
 # Install Brew
-print("---> Installing Brew...\n")
-os.system('touch ~/.bash_profile')
-os.system('/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"')
-os.system('(echo; echo \'eval "$(/opt/homebrew/bin/brew shellenv)"\') >> /Users/gtfunes/.zprofile')
-os.system('eval "$(/opt/homebrew/bin/brew shellenv)"')
-os.system('brew update && brew upgrade && brew cleanup')
+if subprocess.run(["which", "brew"], capture_output=True).returncode != 0:
+    print("---> Installing Brew...\n")
+    run('/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"')
+
+    zprofile = os.path.expanduser("~/.zprofile")
+    brew_line = 'eval "$(/opt/homebrew/bin/brew shellenv)"'
+    # Only append if not already present
+    if not os.path.isfile(zprofile) or brew_line not in open(zprofile).read():
+        with open(zprofile, "a") as f:
+            f.write(f"\n{brew_line}\n")
+
+    # Add pipx PATH (used by pipx for installed tools)
+    pipx_line = 'export PATH="$PATH:$HOME/.local/bin"'
+    if not os.path.isfile(zprofile) or pipx_line not in open(zprofile).read():
+        with open(zprofile, "a") as f:
+            f.write(f"\n{pipx_line}\n")
+
+# Propagate brew env into this Python process
+os.environ["HOMEBREW_PREFIX"] = "/opt/homebrew"
+os.environ["HOMEBREW_CELLAR"] = "/opt/homebrew/Cellar"
+os.environ["HOMEBREW_REPOSITORY"] = "/opt/homebrew"
+os.environ["PATH"] = "/opt/homebrew/bin:/opt/homebrew/sbin:" + os.environ.get("PATH", "")
+
+run("brew update && brew upgrade && brew cleanup")
 
 # Install languages and dev tools
 print("---> Installing Git+NodeJS+Python+Ruby+JDK+React-Native...\n")
-os.system('brew install git python python3 nvm rbenv')
-os.system('nvm install --lts && nvm use --lts && nvm alias default stable')
-os.system('rbenv install 3.4.8 && rbenv global 3.4.8')
-os.system('rbenv init')
-os.system('brew link --overwrite git python python3')
-os.system('brew unlink python && brew link --overwrite python')
-os.system('brew install watchman')
-os.system('sudo softwareupdate --install-rosetta')
-os.system('brew install openjdk@11')
-os.system('sudo ln -sfn $HOMEBREW_PREFIX/opt/openjdk@11/libexec/openjdk.jdk /Library/Java/JavaVirtualMachines/openjdk-11.jdk')
-os.system('brew install git-flow git-lfs')
-os.system('git lfs install')
+run("brew install git python python3 nvm rbenv")
+
+# Source NVM in a subshell for commands that need it
+nvm_prefix = 'export NVM_DIR="$HOME/.nvm" && [ -s "/opt/homebrew/opt/nvm/nvm.sh" ] && . "/opt/homebrew/opt/nvm/nvm.sh"'
+run(f'{nvm_prefix} && nvm install --lts && nvm use --lts && nvm alias default stable')
+
+run("rbenv install -s 3.4.8 && rbenv global 3.4.8")
+run('eval "$(rbenv init - zsh)"')
+run("brew link --overwrite git python python3")
+run("brew unlink python && brew link --overwrite python")
+run("brew install watchman")
+run("sudo softwareupdate --install-rosetta --agree-to-license")
+run("brew install openjdk@11")
+run("sudo ln -sfn $HOMEBREW_PREFIX/opt/openjdk@11/libexec/openjdk.jdk /Library/Java/JavaVirtualMachines/openjdk-11.jdk")
+run("brew install git-flow git-lfs")
+run("git lfs install")
 
 # Install some useful dev stuff
 print("---> Installing useful stuff...\n")
-os.system('brew install graphicsmagick curl wget sqlite libpng libxml2 openssl duti git-extras')
-os.system('brew install pkg-config cairo pixman pango libpng jpeg giflib librsvg')
-os.system('brew install bat tldr tree')
+run("brew install graphicsmagick curl wget sqlite libpng libxml2 openssl duti git-extras")
+run("brew install pkg-config cairo pixman pango libpng jpeg giflib librsvg")
+run("brew install bat tldr tree pipx")
 
 # Install AI tools
 print("---> Installing AI tools...\n")
-os.system('brew install --cask chatgpt')
-os.system('brew install --cask claude')
-os.system('brew install --cask claude-code')
+run("brew install --cask chatgpt")
+run("brew install --cask claude")
+run("brew install claude-code")
 
 # Install Apps only available via MAS
 print("---> Installing MAS apps...\n")
-os.system('brew install mas')
-os.system('mas install 937984704') # Install Amphetamine
-os.system('mas install 1388020431') # Install DevCleaner for Xcode
-os.system('mas install 1522267256') # Install Shareful
+run("brew install mas")
+run("mas install 937984704")   # Amphetamine
+run("mas install 1388020431")  # DevCleaner for Xcode
+run("mas install 1522267256")  # Shareful
 
-# Install Apps
+# Install Quicklook helpers
 print("---> Installing Quicklook helpers...\n")
-os.system('brew install --cask quicklook-csv quicklook-json webpquicklook suspicious-package qlstephen qlprettypatch qlvideo')
+run("brew install --cask quicklook-csv quicklook-json webpquicklook suspicious-package qlstephen qlprettypatch qlvideo")
 
+# Install powerline fonts
 print("---> Installing powerline fonts...\n")
-os.system('git clone https://github.com/powerline/fonts.git --depth=1 && ./fonts/install.sh')
+fonts_dir = os.path.join(tempfile.gettempdir(), "powerline-fonts")
+if not os.path.isdir(fonts_dir):
+    run_args(["git", "clone", "https://github.com/powerline/fonts.git", "--depth=1", fonts_dir])
+run(f"{shlex.quote(fonts_dir)}/install.sh")
 
+# Install essential apps
 print("---> Installing essential apps...\n")
-os.system('brew install --cask 1password 1password-cli iterm2 rectangle the-unarchiver alt-tab raycast')
-os.system(
-    'brew install --cask google-chrome github visual-studio-code daisydisk')
-os.system(
-    'brew install --cask slack vlc zoom')
-os.system(
-    'brew install --cask docker cyberduck imageoptim handbrake postman')
-os.system('brew install --cask android-studio')
-os.system('brew install android-platform-tools')
-os.system('brew install xcodes aria2')
+run("brew install --cask 1password 1password-cli iterm2 rectangle the-unarchiver alt-tab raycast")
+run("brew install --cask google-chrome github visual-studio-code daisydisk")
+run("brew install --cask slack vlc zoom")
+run("brew install --cask docker cyberduck imageoptim handbrake postman")
+run("brew install --cask android-studio")
+run("brew install android-platform-tools")
+run("brew install xcodes aria2")
 
-print ("---> Installing Cocoapods...\n")
-show_notification("We need your password:")
-os.system('sudo gem install cocoapods')
+# Install Cocoapods & Fastlane (no sudo needed with rbenv)
+print("---> Installing Cocoapods...\n")
+run('eval "$(rbenv init - zsh)" && gem install cocoapods')
 
-print ("---> Installing Fastlane...\n")
-show_notification("We need your password:")
-os.system('sudo gem install fastlane --verbose')
+print("---> Installing Fastlane...\n")
+run('eval "$(rbenv init - zsh)" && gem install fastlane')
 
 # Oh-My-ZSH
 print("---> Installing Oh-My-Zsh...\n")
-show_notification("We need your password")
+omz_dir = os.path.expanduser("~/.oh-my-zsh")
+if not os.path.isdir(omz_dir):
+    run(f"umask g-w,o-w && git clone --depth=1 https://github.com/robbyrussell/oh-my-zsh.git {shlex.quote(omz_dir)}")
 
-# Adapted from https://raw.githubusercontent.com/robbyrussell/oh-my-zsh/master/tools/install.sh
-os.system('umask g-w,o-w && git clone --depth=1 https://github.com/robbyrussell/oh-my-zsh.git ~/.oh-my-zsh')
+# Install custom plugins (skip if already cloned)
+plugins = {
+    "zsh-autosuggestions": "https://github.com/zsh-users/zsh-autosuggestions",
+    "zsh-syntax-highlighting": "https://github.com/zsh-users/zsh-syntax-highlighting",
+    "vscode": "https://github.com/valentinocossar/vscode",
+}
+for plugin_name, plugin_url in plugins.items():
+    plugin_dir = os.path.join(omz_dir, "custom", "plugins", plugin_name)
+    if not os.path.isdir(plugin_dir):
+        run_args(["git", "clone", plugin_url, plugin_dir])
 
-if os.system('test -f ~/.zshrc') != 0:
-    os.system('cp ~/.oh-my-zsh/templates/zshrc.zsh-template ~/.zshrc')
+zshrc = os.path.expanduser("~/.zshrc")
+template = os.path.join(omz_dir, "templates", "zshrc.zsh-template")
 
-os.system('git clone git://github.com/zsh-users/zsh-autosuggestions ~/.oh-my-zsh/custom/plugins/zsh-autosuggestions')
-os.system('git clone git://github.com/zsh-users/zsh-syntax-highlighting ~/.oh-my-zsh/custom/plugins/zsh-syntax-highlighting')
-os.system('git clone git://github.com/valentinocossar/vscode ~/.oh-my-zsh/custom/plugins/vscode')
+if not os.path.isfile(zshrc):
+    run_args(["cp", template, zshrc])
 
-# If the user has the default .zshrc tune it a bit
-if (subprocess.call(['bash', '-c', 'diff <(tail -n +6 ~/.zshrc) <(tail -n +6  ~/.oh-my-zsh/templates/zshrc.zsh-template) > /dev/null']) == 0):
-    # Agnoster Theme
-    os.system('sed -i -e \'s/robbyrussell/agnoster/g\' ~/.zshrc &> /dev/null')
-    # Plugins
-    os.system('sed -i -e \'s/plugins=(git)/plugins=(git brew vscode node npm docker zsh-autosuggestions zsh-syntax-highlighting colored-man-pages copyfile extract)/g\' ~/.zshrc &> /dev/null')
-    # Don't show the user in the prompt
-    os.system('echo "DEFAULT_USER=\`whoami\`" >> ~/.zshrc')
-    os.system('echo "export NVM_DIR=\"$HOME/.nvm\" \n [ -s \"/opt/homebrew/opt/nvm/nvm.sh\" ] && \. \"/opt/homebrew/opt/nvm/nvm.sh\" # This loads nvm \n [ -s \"/opt/homebrew/opt/nvm/etc/bash_completion.d/nvm\" ] && \. \"/opt/homebrew/opt/nvm/etc/bash_completion.d/nvm\"  # This loads nvm bash_completion" >> ~/.zshrc')
+# If the user has the default .zshrc, tune it
+diff_check = subprocess.run(
+    ["bash", "-c", f"diff <(tail -n +6 {shlex.quote(zshrc)}) <(tail -n +6 {shlex.quote(template)}) > /dev/null"],
+    capture_output=True
+)
+if diff_check.returncode == 0:
+    # Set Agnoster theme
+    run(f"sed -i '' 's/robbyrussell/agnoster/g' {shlex.quote(zshrc)}")
+    # Set plugins
+    run(f"sed -i '' 's/plugins=(git)/plugins=(git brew vscode node npm docker zsh-autosuggestions zsh-syntax-highlighting colored-man-pages copyfile extract)/g' {shlex.quote(zshrc)}")
+    # Fix history settings (replace bash-isms with zsh equivalents)
+    run(f"sed -i '' 's/HISTSIZE=1000/HISTSIZE=500/g' {shlex.quote(zshrc)}")
+    run(f"sed -i '' 's/SAVEHIST=1000/SAVEHIST=500/g' {shlex.quote(zshrc)}")
+    # Add Docker completions fpath before source oh-my-zsh.sh (so compinit picks it up)
+    run(f"sed -i '' 's|source \\$ZSH/oh-my-zsh.sh|# Docker completions fpath (before oh-my-zsh so compinit picks it up)\\nfpath=($HOME/.docker/completions $fpath)\\n\\nsource $ZSH/oh-my-zsh.sh|g' {shlex.quote(zshrc)}")
+    # Append additional config
+    with open(zshrc, "a") as f:
+        f.write('\nDEFAULT_USER="$USER"\n')
+        f.write('\nexport LANG=en_US.UTF-8\n')
+        f.write(
+            '\n# Lazy-load NVM (defers ~300-700ms until first use)\n'
+            'export NVM_DIR="$HOME/.nvm"\n'
+            'nvm_lazy_load() {\n'
+            '  unset -f nvm node npm npx\n'
+            '  [ -s "/opt/homebrew/opt/nvm/nvm.sh" ] && \\. "/opt/homebrew/opt/nvm/nvm.sh"\n'
+            '  [ -s "/opt/homebrew/opt/nvm/etc/bash_completion.d/nvm" ] && \\. "/opt/homebrew/opt/nvm/etc/bash_completion.d/nvm"\n'
+            '}\n'
+            'nvm() { nvm_lazy_load; nvm "$@"; }\n'
+            'node() { nvm_lazy_load; node "$@"; }\n'
+            'npm() { nvm_lazy_load; npm "$@"; }\n'
+            'npx() { nvm_lazy_load; npx "$@"; }\n'
+            '\n'
+            '# NVM auto .nvmrc loading (triggers lazy load on cd)\n'
+            'autoload -U add-zsh-hook\n'
+            'load-nvmrc() {\n'
+            '  local nvmrc_path="$(nvm_find_nvmrc 2>/dev/null)"\n'
+            '  if [ -n "$nvmrc_path" ]; then\n'
+            '    nvm_lazy_load\n'
+            '    local node_version="$(nvm version)"\n'
+            '    local nvmrc_node_version=$(nvm version "$(cat "${nvmrc_path}")")\n'
+            '    if [ "$nvmrc_node_version" = "N/A" ]; then\n'
+            '      nvm install\n'
+            '    elif [ "$nvmrc_node_version" != "$node_version" ]; then\n'
+            '      nvm use\n'
+            '    fi\n'
+            '  fi\n'
+            '}\n'
+            'add-zsh-hook chpwd load-nvmrc\n'
+            '\n'
+            'eval "$(rbenv init - --no-rehash zsh)"\n'
+        )
 
 # Remove the 'last login' message
-os.system('touch ~/.hushlogin')
+hushlogin = os.path.expanduser("~/.hushlogin")
+if not os.path.isfile(hushlogin):
+    open(hushlogin, "a").close()
 
-# Random OSX Settings
-print("---> Tweaking OSX settings...\n")
-
+# macOS Settings
+print("---> Tweaking macOS settings...\n")
 # Finder: show hidden files by default
-os.system('defaults write com.apple.finder AppleShowAllFiles -bool true')
+run("defaults write com.apple.finder AppleShowAllFiles -bool true")
 # Finder: show all filename extensions
-os.system('defaults write NSGlobalDomain AppleShowAllExtensions -bool true')
-
+run("defaults write NSGlobalDomain AppleShowAllExtensions -bool true")
 # Finder: allow text selection in Quick Look
-os.system('defaults write com.apple.finder QLEnableTextSelection -bool true')
+run("defaults write com.apple.finder QLEnableTextSelection -bool true")
 # Check for software updates daily
-os.system('defaults write com.apple.SoftwareUpdate ScheduleFrequency -int 1')
-
+run("defaults write com.apple.SoftwareUpdate ScheduleFrequency -int 1")
 # Disable auto-correct
-os.system(
-    'defaults write NSGlobalDomain NSAutomaticSpellingCorrectionEnabled -bool false')
-
+run("defaults write NSGlobalDomain NSAutomaticSpellingCorrectionEnabled -bool false")
 # Require password immediately after sleep or screen saver begins
-os.system('defaults write com.apple.screensaver askForPassword -int 1')
-os.system('defaults write com.apple.screensaver askForPasswordDelay -int 0')
+run("defaults write com.apple.screensaver askForPassword -int 1")
+run("defaults write com.apple.screensaver askForPasswordDelay -int 0")
 # Show the ~/Library folder
-os.system('chflags nohidden ~/Library')
-# Don’t automatically rearrange Spaces based on most recent use
-os.system('defaults write com.apple.dock mru-spaces -bool false')
+run("chflags nohidden ~/Library")
+# Don't automatically rearrange Spaces based on most recent use
+run("defaults write com.apple.dock mru-spaces -bool false")
 # Prevent Time Machine from prompting to use new hard drives as backup volume
-os.system(
-    'defaults write com.apple.TimeMachine DoNotOfferNewDisksForBackup -bool true')
-
+run("defaults write com.apple.TimeMachine DoNotOfferNewDisksForBackup -bool true")
 # Disable two finger swipe to go back/forward in Google Chrome
-os.system(
-    'defaults write com.google.Chrome AppleEnableSwipeNavigateWithScrolls -bool false')
+run("defaults write com.google.Chrome AppleEnableSwipeNavigateWithScrolls -bool false")
 
 print("---> Tweaking system animations...\n")
-os.system('defaults write NSGlobalDomain NSWindowResizeTime -float 0.1')
-os.system('defaults write com.apple.dock expose-animation-duration -float 0.15')
-os.system('defaults write com.apple.dock autohide-delay -float 0')
-os.system('defaults write com.apple.dock autohide-time-modifier -float 0.3')
-os.system('defaults write NSGlobalDomain com.apple.springing.delay -float 0.5')
-os.system('killall Dock')
+run("defaults write NSGlobalDomain NSWindowResizeTime -float 0.1")
+run("defaults write com.apple.dock expose-animation-duration -float 0.15")
+run("defaults write com.apple.dock autohide-delay -float 0")
+run("defaults write com.apple.dock autohide-time-modifier -float 0.3")
+run("defaults write NSGlobalDomain com.apple.springing.delay -float 0.5")
+run("killall Dock")
 
 # Set default apps
 print("---> Setting default applications...\n")
 
 # Make Google Chrome the default browser
-os.system('open -a "Google Chrome" --args --make-default-browser')
+run('open -a "Google Chrome" --args --make-default-browser')
 
 # Make iTerm the default app for .command files
-os.system('duti -s com.googlecode.iterm2 .command all')
+run("duti -s com.googlecode.iterm2 .command all")
 
 # Make VSCode the default app for development related files
-os.system('duti -s com.microsoft.VSCode .js all')
-os.system('duti -s com.microsoft.VSCode .jsx all')
-os.system('duti -s com.microsoft.VSCode .ts all')
-os.system('duti -s com.microsoft.VSCode .tsx all')
-os.system('duti -s com.microsoft.VSCode .json all')
-os.system('duti -s com.microsoft.VSCode .sh all')
-os.system('duti -s com.microsoft.VSCode .yml all')
-os.system('duti -s com.microsoft.VSCode .py all')
-os.system('duti -s com.microsoft.VSCode .xml all')
-os.system('duti -s com.microsoft.VSCode .md all')
+vscode_extensions = [".js", ".jsx", ".ts", ".tsx", ".json", ".sh", ".yml", ".py", ".xml", ".md"]
+for ext in vscode_extensions:
+    run(f"duti -s com.microsoft.VSCode {ext} all")
 
 # Clean Up Brew
-print("--->Cleaning up Brew...\n")
-os.system('brew cleanup')
+print("---> Cleaning up Brew...\n")
+run("brew cleanup")
 
 # Mute startup sound
 print("---> Muting system startup sound...\n")
-show_notification("We need your password")
-os.system('sudo nvram SystemAudioVolume=%00')
+run("sudo nvram SystemAudioVolume=%00")
 
 # Change the default shell to zsh
 print("---> Switching default shell to zsh...\n")
-os.system('chsh -s /bin/zsh &> /dev/null')
+run("chsh -s /bin/zsh")
 
 # Install latest Xcode
 print("---> Installing latest Xcode (this will take a while)...\n")
-os.system('xcodes install --latest')
-os.system('sudo xcode-select --switch /Applications/Xcode.app') # Select Xcode app to avoid issues running apps later
+run("xcodes install --latest")
+
+# Find the installed Xcode app (xcodes names it e.g. "Xcode-16.3.app")
+xcode_apps = sorted(glob.glob("/Applications/Xcode*.app"), reverse=True)
+if xcode_apps:
+    run(f"sudo xcode-select --switch {shlex.quote(xcode_apps[0])}")
+else:
+    print("WARNING: Could not find Xcode.app in /Applications")
 
 print("*************************************")
 show_notification("All done!")
