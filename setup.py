@@ -1,5 +1,6 @@
 #!/usr/bin/python3
 # -*- coding: utf-8 -*-
+# Prerequisites: Xcode Command Line Tools (run `xcode-select --install` first)
 
 import glob
 import os
