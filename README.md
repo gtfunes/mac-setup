@@ -11,14 +11,14 @@ curl -fsSL https://raw.githubusercontent.com/gtfunes/mac-setup/master/setup.py -
 
 ## What it does
 - Asks for your name and email (used for git config and computer name)
-- Generates an SSH key
+- Generates an Ed25519 SSH key
 - Installs [Homebrew](https://brew.sh)
-- Installs dev tools: Git, Python, NVM (Node.js), rbenv (Ruby), OpenJDK 11, Watchman, Rosetta 2
-- Installs CLI utilities: bat, tldr, tree, pipx, curl, wget, git-extras
+- Installs dev tools: Git, Python, NVM (Node.js LTS), rbenv (Ruby), Azul Zulu JDK 17, Watchman, Rosetta 2
+- Installs CLI utilities: bat, tlrc (tldr), tree, pipx, curl, wget, git-extras, git-flow-next, git-lfs
 - Installs AI tools: ChatGPT, Claude, Claude Code
 - Installs apps: 1Password, iTerm2, Rectangle, Raycast, Google Chrome, VS Code, Docker, Slack, Zoom, VLC, and more
 - Installs Mac App Store apps via `mas`: Amphetamine, DevCleaner, Shareful
-- Installs QuickLook plugins and Powerline fonts
+- Installs Quick Look extensions (source code, video, installer packages) and Powerline fonts
 - Installs CocoaPods and Fastlane
 - Sets up Oh My Zsh with Agnoster theme, plugins, and lazy-loaded NVM — the newest Node stays on `PATH` for non-interactive tools and hooks, `.nvmrc` files switch versions on `cd`, and `PATH` entries are kept unique
 - Configures macOS preferences (Finder, Dock, animations, privacy)

@@ -48,11 +48,11 @@ print("You'll be asked for your password a few times during this process")
 print("*************************************")
 
 # Create a Private Key
-ssh_pub = os.path.expanduser("~/.ssh/id_rsa.pub")
+ssh_pub = os.path.expanduser("~/.ssh/id_ed25519.pub")
 if not os.path.isfile(ssh_pub):
     print("---> Creating your private key...\n")
-    run_args(["ssh-keygen", "-t", "rsa", "-b", "4096", "-f",
-              os.path.expanduser("~/.ssh/id_rsa"), "-N", "", "-C", email])
+    run_args(["ssh-keygen", "-t", "ed25519", "-f",
+              os.path.expanduser("~/.ssh/id_ed25519"), "-N", "", "-C", email])
 
 # Set computer name & git info
 local_hostname = name.replace(" ", "-")
@@ -91,34 +91,33 @@ run("brew update && brew upgrade && brew cleanup")
 
 # Install languages and dev tools
 print("---> Installing Git+NodeJS+Python+Ruby+JDK+React-Native...\n")
-run("brew install git python python3 nvm rbenv")
+run("brew install git python nvm rbenv")
 
 # Source NVM in a subshell for commands that need it
 nvm_prefix = 'export NVM_DIR="$HOME/.nvm" && [ -s "/opt/homebrew/opt/nvm/nvm.sh" ] && . "/opt/homebrew/opt/nvm/nvm.sh"'
-run(f'{nvm_prefix} && nvm install --lts && nvm use --lts && nvm alias default stable')
+run(f'{nvm_prefix} && nvm install --lts && nvm use --lts && nvm alias default \'lts/*\'')
 
-run("rbenv install -s 3.4.8 && rbenv global 3.4.8")
+run("rbenv install -s 3.4.11 && rbenv global 3.4.11")
 run('eval "$(rbenv init - zsh)"')
-run("brew link --overwrite git python python3")
+run("brew link --overwrite git python")
 run("brew unlink python && brew link --overwrite python")
 run("brew install watchman")
 run("sudo softwareupdate --install-rosetta --agree-to-license")
-run("brew install openjdk@11")
-run("sudo ln -sfn $HOMEBREW_PREFIX/opt/openjdk@11/libexec/openjdk.jdk /Library/Java/JavaVirtualMachines/openjdk-11.jdk")
-run("brew install git-flow git-lfs")
+run("brew install --cask zulu@17")
+run("brew install git-flow-next git-lfs")
 run("git lfs install")
 
 # Install some useful dev stuff
 print("---> Installing useful stuff...\n")
 run("brew install graphicsmagick curl wget sqlite libpng libxml2 openssl duti git-extras")
-run("brew install pkg-config cairo pixman pango libpng jpeg giflib librsvg")
-run("brew install bat tldr tree pipx")
+run("brew install pkgconf cairo pixman pango libpng jpeg giflib librsvg")
+run("brew install bat tlrc tree pipx")
 
 # Install AI tools
 print("---> Installing AI tools...\n")
 run("brew install --cask chatgpt")
 run("brew install --cask claude")
-run("brew install claude-code")
+run("brew install --cask claude-code")
 
 # Install Apps only available via MAS
 print("---> Installing MAS apps...\n")
@@ -129,7 +128,7 @@ run("mas install 1522267256")  # Shareful
 
 # Install Quicklook helpers
 print("---> Installing Quicklook helpers...\n")
-run("brew install --cask quicklook-csv quicklook-json webpquicklook suspicious-package qlstephen qlprettypatch qlvideo")
+run("brew install --cask suspicious-package syntax-highlight quicklook-video")
 
 # Install powerline fonts
 print("---> Installing powerline fonts...\n")
@@ -143,9 +142,9 @@ print("---> Installing essential apps...\n")
 run("brew install --cask 1password 1password-cli iterm2 rectangle the-unarchiver alt-tab raycast")
 run("brew install --cask google-chrome github visual-studio-code daisydisk")
 run("brew install --cask slack vlc zoom")
-run("brew install --cask docker cyberduck imageoptim handbrake postman")
+run("brew install --cask docker-desktop cyberduck imageoptim handbrake-app postman")
 run("brew install --cask android-studio")
-run("brew install android-platform-tools")
+run("brew install --cask android-platform-tools")
 run("brew install xcodes aria2")
 
 # Install Cocoapods & Fastlane (no sudo needed with rbenv)
@@ -159,13 +158,12 @@ run('eval "$(rbenv init - zsh)" && gem install fastlane')
 print("---> Installing Oh-My-Zsh...\n")
 omz_dir = os.path.expanduser("~/.oh-my-zsh")
 if not os.path.isdir(omz_dir):
-    run(f"umask g-w,o-w && git clone --depth=1 https://github.com/robbyrussell/oh-my-zsh.git {shlex.quote(omz_dir)}")
+    run(f"umask g-w,o-w && git clone --depth=1 https://github.com/ohmyzsh/ohmyzsh.git {shlex.quote(omz_dir)}")
 
 # Install custom plugins (skip if already cloned)
 plugins = {
     "zsh-autosuggestions": "https://github.com/zsh-users/zsh-autosuggestions",
     "zsh-syntax-highlighting": "https://github.com/zsh-users/zsh-syntax-highlighting",
-    "vscode": "https://github.com/valentinocossar/vscode",
 }
 for plugin_name, plugin_url in plugins.items():
     plugin_dir = os.path.join(omz_dir, "custom", "plugins", plugin_name)
@@ -302,7 +300,7 @@ run("brew cleanup")
 
 # Mute startup sound
 print("---> Muting system startup sound...\n")
-run("sudo nvram SystemAudioVolume=%00")
+run("sudo nvram StartupMute=%01")
 
 # Change the default shell to zsh
 print("---> Switching default shell to zsh...\n")
