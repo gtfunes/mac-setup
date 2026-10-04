@@ -9,6 +9,20 @@ xcode-select --install
 curl -fsSL https://raw.githubusercontent.com/gtfunes/mac-setup/master/setup.py -o /tmp/setup.py && python3 /tmp/setup.py
 ```
 
+## Check or fix an existing Mac
+```shell
+python3 /tmp/setup.py --check   # report drift from this setup; changes nothing, exit 1 on drift
+python3 /tmp/setup.py --fix     # apply the safe fixes, ask before JDK changes
+```
+- Reports missing packages, packages this setup has replaced (for example `tldr` → `tlrc`), installed packages Homebrew marks deprecated or disabled, the nvm default, the oh-my-zsh setup, the `~/.zshrc` lines this setup writes, the Ruby version, SSH key type and startup mute.
+- `--fix` never edits `~/.zshrc` (it prints the block to paste) and never touches SSH keys.
+- Packages you leave out on purpose: list them one per line in `~/.config/mac-setup/skip`.
+
+## Tests
+```shell
+python3 -m unittest discover -s tests -v
+```
+
 ## What it does
 - Asks for your name and email (used for git config and computer name)
 - Generates an Ed25519 SSH key
