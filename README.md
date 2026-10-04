@@ -14,7 +14,7 @@ curl -fsSL https://raw.githubusercontent.com/gtfunes/mac-setup/master/setup.py -
 - Generates an Ed25519 SSH key
 - Installs [Homebrew](https://brew.sh)
 - Installs dev tools: Git, Python, NVM (Node.js LTS), rbenv (Ruby), Azul Zulu JDK 17, Watchman, Rosetta 2
-- Installs CLI utilities: bat, tlrc (tldr), tree, pipx, curl, wget, git-extras, git-flow-next, git-lfs
+- Installs CLI utilities: GitHub CLI (gh), bat, tlrc (tldr), tree, pipx, curl, wget, git-extras, git-flow-next, git-lfs
 - Installs AI tools: ChatGPT, Claude, Claude Code
 - Installs apps: 1Password, iTerm2, Rectangle, Raycast, Google Chrome, VS Code, Docker, Slack, Zoom, VLC, and more
 - Installs Mac App Store apps via `mas`: Amphetamine, DevCleaner, Shareful

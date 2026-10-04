@@ -104,7 +104,7 @@ run("brew unlink python && brew link --overwrite python")
 run("brew install watchman")
 run("sudo softwareupdate --install-rosetta --agree-to-license")
 run("brew install --cask zulu@17")
-run("brew install git-flow-next git-lfs")
+run("brew install gh git-flow-next git-lfs")
 run("git lfs install")
 
 # Install some useful dev stuff
