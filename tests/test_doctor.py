@@ -123,6 +123,15 @@ class PackageFindingsTest(unittest.TestCase):
         self.assertFalse(found[0].drift)
 
 
+class FixOrderTest(unittest.TestCase):
+    def test_conflicting_old_package_goes_before_its_replacement_but_jdk_removal_goes_last(self):
+        brew = {"formulae": [formula("git-flow"), formula("openjdk@11")], "casks": []}
+        found = setup.package_findings({"git-flow-next"}, {"zulu@17"}, setup.REPLACED, setup.installed_index(brew))
+        order = [(f.kind, f.subject) for f in setup.fix_order(found)]
+        self.assertLess(order.index(("replaced", "git-flow")), order.index(("missing", "git-flow-next")))
+        self.assertLess(order.index(("missing", "zulu@17")), order.index(("replaced", "openjdk@11")))
+
+
 class SkipListTest(unittest.TestCase):
     def test_skip_list_ignores_comments_and_blanks(self):
         text = "# apps I don't use\nchatgpt\n\n  daisydisk  # disk viewer\n"

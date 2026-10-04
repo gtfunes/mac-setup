@@ -218,6 +218,15 @@ def package_findings(want_formulae, want_casks, replaced, index, skip=frozenset(
             findings.append(Finding("flagged", name, detail, False, None))
     return findings
 
+def fix_order(findings):
+    """Old packages go first (a replacement can conflict with what it replaces, as git-flow-next does
+    with git-flow); the confirmed JDK removal goes last, after its replacement is installed."""
+    def rank(f):
+        if f.kind == "replaced":
+            return 3 if f.subject in CONFIRM else 0
+        return 1 if f.kind == "missing" else 2
+    return sorted(findings, key=rank)
+
 def zshrc_findings(text):
     findings = [Finding("zshrc", line, f"missing: {why}", True, None)
                 for line, why in ZSHRC_MARKERS.items() if line not in text]
@@ -311,7 +320,7 @@ def doctor(fix=False):
     report(findings)
     if not fix:
         return 1 if any(f.drift for f in findings) else 0
-    for f in findings:
+    for f in fix_order(findings):
         if f.fix:
             print(f"---> {f.kind} {f.subject}")
             f.fix()
