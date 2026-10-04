@@ -132,6 +132,27 @@ class FixOrderTest(unittest.TestCase):
         self.assertLess(order.index(("missing", "zulu@17")), order.index(("replaced", "openjdk@11")))
 
 
+class ConfirmTest(unittest.TestCase):
+    def run_fix(self, name, answer):
+        calls = []
+        fix = setup._confirmed(name, lambda: calls.append(name))
+        with mock.patch.object(builtins, "input", side_effect=answer), mock.patch("builtins.print"):
+            fix()
+        return calls
+
+    def test_jdk_change_runs_on_yes(self):
+        self.assertEqual(self.run_fix("zulu@17", ["y"]), ["zulu@17"])
+
+    def test_jdk_change_skipped_on_default_answer(self):
+        self.assertEqual(self.run_fix("openjdk@11", [""]), [])
+
+    def test_jdk_change_skipped_without_a_terminal(self):
+        self.assertEqual(self.run_fix("openjdk@11", EOFError()), [])
+
+    def test_other_fixes_run_without_asking(self):
+        self.assertEqual(self.run_fix("tlrc", AssertionError("asked")), ["tlrc"])
+
+
 class SkipListTest(unittest.TestCase):
     def test_skip_list_ignores_comments_and_blanks(self):
         text = "# apps I don't use\nchatgpt\n\n  daisydisk  # disk viewer\n"
