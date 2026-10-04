@@ -20,7 +20,7 @@ curl -fsSL https://raw.githubusercontent.com/gtfunes/mac-setup/master/setup.py -
 - Installs Mac App Store apps via `mas`: Amphetamine, DevCleaner, Shareful
 - Installs QuickLook plugins and Powerline fonts
 - Installs CocoaPods and Fastlane
-- Sets up Oh My Zsh with Agnoster theme, plugins, and lazy-loaded NVM
+- Sets up Oh My Zsh with Agnoster theme, plugins, and lazy-loaded NVM — the newest Node stays on `PATH` for non-interactive tools and hooks, `.nvmrc` files switch versions on `cd`, and `PATH` entries are kept unique
 - Configures macOS preferences (Finder, Dock, animations, privacy)
 - Sets default apps (Chrome as browser, VS Code for dev files)
 - Installs the latest Xcode via `xcodes`
